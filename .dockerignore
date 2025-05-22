@@ -1,0 +1,34 @@
+##########################
+# Kedro PROJECT
+
+# ignore Dockerfile and .dockerignore
+Dockerfile
+.dockerignore
+
+# ignore potentially sensitive credentials files
+conf/**/*credentials*
+
+# ignore all local configuration
+conf/local
+!conf/local/.gitkeep
+
+# Data - ignore processed data layers, but include raw data (data/01_raw/)
+data/02_intermediate/
+data/03_primary/
+data/04_feature/
+data/05_model_input/
+data/06_models/
+data/07_model_output/
+data/08_reporting/
+
+# ignore these top-level folders (data is no longer here)
+logs/
+notebooks/
+# references/ # You might want this in your image if it contains schemas or fixed reference data
+results/
+
+# except the following .gitkeep files (these are fine)
+!logs/.gitkeep
+!notebooks/.gitkeep
+# !references/.gitkeep # If you decide to include references
+!results/.gitkeep
