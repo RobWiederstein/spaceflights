@@ -60,6 +60,17 @@ jobs:
       - name: Run Kedro pipeline from Docker image
         if: success()
         run: |
+          echo "" # Add a blank line for spacing before
+          echo "************************************************************************************"
+          echo "***************** STARTING KEDRO PIPELINE EXECUTION   ***************************"
+          echo "************************************************************************************"
           echo "Running Kedro pipeline from image: ghcr.io/${{ env.OWNER_LC }}/spaceflights-app:${{ github.ref_name }}"
-          # Use the lowercase owner for running the image
+          
           docker run --rm ghcr.io/${{ env.OWNER_LC }}/spaceflights-app:${{ github.ref_name }}
+          
+          echo "" # Add a blank line for spacing after
+          echo "************************************************************************************"
+          echo "***************** KEDRO PIPELINE EXECUTION FINISHED    ***************************"
+          echo "************************************************************************************"
+          echo ""
+
