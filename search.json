@@ -1,0 +1,23 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "My Quarto Document with Python",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable Python code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "index.html#quarto-and-python",
+    "href": "index.html#quarto-and-python",
+    "title": "My Quarto Document with Python",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable Python code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "index.html#running-python-code",
+    "href": "index.html#running-python-code",
+    "title": "My Quarto Document with Python",
+    "section": "Running Python Code",
+    "text": "Running Python Code\nWhen you render this document, it will include both the content and the output of the embedded Python code.\nHere’s a simple Python calculation:\n\n# This is a Python code chunk\na = 1\nb = 1\nresult = a + b"
+  }
+]
