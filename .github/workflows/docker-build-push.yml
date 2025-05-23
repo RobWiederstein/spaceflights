@@ -57,36 +57,14 @@ jobs:
         run: |
           echo "Pushed image digest: ${{ steps.build-and-push.outputs.digest }}"
 
-      - name: Display pyproject.toml from container
-        run: |
-          echo "Contents of /home/kedro_docker/pyproject.toml inside container:"
-          docker run --rm \
-            --entrypoint cat \
-            ghcr.io/${{ env.OWNER_LC }}/spaceflights-app:${{ github.ref_name }} \
-            /home/kedro_docker/pyproject.toml
-
-      - name: Run Kedro pipeline from Docker image
+      - name: Run Pipeline and Render Documentation
         if: success()
         run: |
-          echo "" # Add a blank line for spacing before
-          echo "************************************************************************************"
-          echo "***************** STARTING KEDRO PIPELINE EXECUTION   ***************************"
-          echo "************************************************************************************"
-          echo "Running Kedro pipeline from image: ghcr.io/${{ env.OWNER_LC }}/spaceflights-app:${{ github.ref_name }}"
-          
-          docker run --rm ghcr.io/${{ env.OWNER_LC }}/spaceflights-app:${{ github.ref_name }}
-          
-          echo "" # Add a blank line for spacing after
-          echo "************************************************************************************"
-          echo "***************** KEDRO PIPELINE EXECUTION FINISHED    ***************************"
-          echo "************************************************************************************"
-          echo ""
-
-      - name: Render Quarto Documentation
-        if: success() 
-        run: |
-          echo ">>> Starting Quarto documentation rendering..."
-          docker run --name docs_renderer ghcr.io/${{ env.OWNER_LC }}/spaceflights-app:${{ github.ref_name }} ./render_docs.sh
+          echo "-------------------------- Executing Pipeline & Rendering Docs via Script ----------------------------"
+          docker run --name output_generator_container \
+            ghcr.io/${{ env.OWNER_LC }}/spaceflights-app:${{ github.ref_name }} \
+            ./run_and_render.sh # <-- Use your new script name here
+          echo "-------------------------- Script Execution Finished in Container ------------------------------------"
 
       - name: Prepare Documentation for Deployment
         if: success()

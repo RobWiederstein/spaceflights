@@ -112,9 +112,8 @@ COPY --chown=${KEDRO_UID}:${KEDRO_GID} . .
 
 
 # copy shell file into container
-COPY --chown=kedro_docker:kedro_group render_docs.sh /home/kedro_docker/render_docs.sh
-RUN chmod +x /home/kedro_docker/render_docs.sh
-
+COPY --chown=kedro_docker:kedro_group run_and_render.sh /home/kedro_docker/run_and_render.sh
+RUN chmod +x /home/kedro_docker/run_and_render.sh
 
 # Expose port (e.g., for kedro viz or jupyter)
 EXPOSE 8888
