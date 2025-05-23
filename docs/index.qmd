@@ -1,0 +1,23 @@
+---
+title: "My Quarto Document with Python"
+format: html
+execute:
+  echo: true # This will show the code by default, can be overridden per chunk
+---
+
+## Quarto and Python
+
+Quarto enables you to weave together content and executable Python code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Python Code
+
+When you render this document, it will include both the content and the output of the embedded Python code.
+
+Here's a simple Python calculation:
+
+```{python}
+# This is a Python code chunk
+a = 1
+b = 1
+result = a + b
+```

@@ -1,0 +1,21 @@
+# docs/_quarto.yml
+project:
+  type: website
+  output-dir: _site # This is the default for 'website' type, but good to be explicit
+
+website:
+  title: "Spaceflights Kedro Project Docs" # Will appear in the browser tab & navbar
+  navbar:
+    left:
+      - href: index.qmd  # Link to your main page
+        text: Home       # Text for the link in the navbar
+    # You can add more pages to the navbar later:
+    #  - href: another_page.qmd
+    #    text: Another Page
+
+# Basic HTML output formatting
+format:
+  html:
+    theme: cosmo   # A clean, popular Bootstrap theme. Many others are available!
+    toc: true      # Generate a table of contents for pages that have headings
+    css: styles.css # Optional: if you want to add custom CSS in docs/styles.css
