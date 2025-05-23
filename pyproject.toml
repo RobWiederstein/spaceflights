@@ -86,3 +86,7 @@ ignore = ["E501"]  # Ruff format takes care of line-too-long
 
 [tool.kedro_telemetry]
 project_id = "34e8e7d695ca40e08c5ae5efafe7f6fd"
+
+[tool.kedro.project_commands]
+build-docs = "quarto render docs"
+

@@ -32,7 +32,7 @@ RUN set -e && \
 
 # Install Quarto CLI
 ENV QUARTO_VERSION="1.7.31"
-ENV QUARTO_DEB_FILENAME="quarto-1.7.31-linux-amd64.deb"
+ENV QUARTO_DEB_FILENAME="quarto-1.7.31-linux-arm64.deb"
 
 RUN set -e && \
     echo "Downloading Quarto version ${QUARTO_VERSION} from URL: https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/${QUARTO_DEB_FILENAME}" && \
@@ -101,6 +101,12 @@ FROM runtime-environment
 ARG KEDRO_UID=999 
 ARG KEDRO_GID=0
 COPY --chown=${KEDRO_UID}:${KEDRO_GID} . .
+
+
+# copy shell file into container
+COPY --chown=kedro_docker:kedro_group render_docs.sh /home/kedro_docker/render_docs.sh
+RUN chmod +x /home/kedro_docker/render_docs.sh
+
 
 # Expose port (e.g., for kedro viz or jupyter)
 EXPOSE 8888

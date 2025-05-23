@@ -74,3 +74,26 @@ jobs:
           echo "************************************************************************************"
           echo ""
 
+      - name: Render Quarto Documentation
+        if: success() 
+        run: |
+          echo ">>> Starting Quarto documentation rendering..."
+          docker run --name docs_renderer ghcr.io/${{ env.OWNER_LC }}/spaceflights-app:${{ github.ref_name }} ./render_docs.sh
+
+      - name: Prepare Documentation for Deployment
+        if: success()
+        run: |
+          echo "Creating directory for documentation output on runner..."
+          mkdir -p ./quarto_site_to_deploy
+          echo "Copying rendered Quarto site contents from Docker container..."
+          docker cp docs_renderer:/home/kedro_docker/docs/_site/. ./quarto_site_to_deploy/
+          docker rm docs_renderer
+          echo "Contents of quarto_site_to_deploy (documentation to be deployed):"
+          ls -R ./quarto_site_to_deploy
+
+      - name: Deploy to GitHub Pages
+        if: success()
+        uses: peaceiris/actions-gh-pages@v4 # Or latest major version
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./quarto_site_to_deploy
