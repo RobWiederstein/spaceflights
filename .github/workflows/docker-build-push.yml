@@ -57,6 +57,14 @@ jobs:
         run: |
           echo "Pushed image digest: ${{ steps.build-and-push.outputs.digest }}"
 
+      - name: Display pyproject.toml from container
+        run: |
+          echo "Contents of /home/kedro_docker/pyproject.toml inside container:"
+          docker run --rm \
+            --entrypoint cat \
+            ghcr.io/${{ env.OWNER_LC }}/spaceflights-app:${{ github.ref_name }} \
+            /home/kedro_docker/pyproject.toml
+
       - name: Run Kedro pipeline from Docker image
         if: success()
         run: |
