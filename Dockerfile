@@ -32,7 +32,7 @@ RUN set -e && \
 
 # Install Quarto CLI
 ENV QUARTO_VERSION="1.7.31"
-ENV QUARTO_DEB_FILENAME="quarto-1.7.31-linux-arm64.deb"
+ENV QUARTO_DEB_FILENAME="quarto-${QUARTO_VERSION}-linux-amd64.deb"
 
 RUN set -e && \
     echo "Downloading Quarto version ${QUARTO_VERSION} from URL: https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/${QUARTO_DEB_FILENAME}" && \
