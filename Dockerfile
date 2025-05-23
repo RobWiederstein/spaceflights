@@ -1,11 +1,12 @@
 ARG BASE_IMAGE=python:3.9-slim
 FROM $BASE_IMAGE AS runtime-environment
 
+ARG TARGETARCH
+
 # Install essential OS packages needed for tree, eza download, quarto download,
 # and general utilities. ca-certificates is good for curl https.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        tree \
         curl \
         tar \
         gzip \
@@ -15,41 +16,48 @@ RUN apt-get update && \
 
 # Install eza
 ENV EZA_VERSION="0.21.3"
-ENV EZA_ARCHIVE_FILENAME="eza_x86_64-unknown-linux-musl.tar.gz"
 RUN set -e && \
-    echo "Downloading from URL: https://github.com/eza-community/eza/releases/download/v${EZA_VERSION}/${EZA_ARCHIVE_FILENAME}" && \
+   EZA_ARCHIVE_PART="" && \
+    if [ "${TARGETARCH}" = "amd64" ]; then \
+        EZA_ARCHIVE_PART="x86_64-unknown-linux-musl"; \
+    elif [ "${TARGETARCH}" = "arm64" ]; then \
+        EZA_ARCHIVE_PART="aarch64-unknown-linux-gnu"; \ 
+    else \
+        echo "Unsupported architecture for eza: ${TARGETARCH}" && exit 1; \
+    fi && \
+    EZA_ARCHIVE_FILENAME="eza_${EZA_ARCHIVE_PART}.tar.gz" && \
+    echo "Downloading eza (arch: ${TARGETARCH}) using ${EZA_ARCHIVE_FILENAME}" && \
     curl -fLSo /tmp/eza.tar.gz "https://github.com/eza-community/eza/releases/download/v${EZA_VERSION}/${EZA_ARCHIVE_FILENAME}" && \
-    echo "--- Downloaded archive type: ---" && \
     file /tmp/eza.tar.gz && \
-    echo "---------------------------" && \
     tar -xzf /tmp/eza.tar.gz -C /tmp && \
     mv /tmp/eza /usr/local/bin/eza && \
     chmod +x /usr/local/bin/eza && \
-    echo "Verifying eza installation" && \
     eza --version && \
     rm -f /tmp/eza.tar.gz && \
     echo "eza installation complete."
 
 # Install Quarto CLI
 ENV QUARTO_VERSION="1.7.31"
-ENV QUARTO_DEB_FILENAME="quarto-${QUARTO_VERSION}-linux-amd64.deb"
-
 RUN set -e && \
-    echo "Downloading Quarto version ${QUARTO_VERSION} from URL: https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/${QUARTO_DEB_FILENAME}" && \
+    QUARTO_DEB_ARCH_SUFFIX="" && \
+    if [ "${TARGETARCH}" = "amd64" ]; then \
+        QUARTO_DEB_ARCH_SUFFIX="amd64"; \
+    elif [ "${TARGETARCH}" = "arm64" ]; then \
+        QUARTO_DEB_ARCH_SUFFIX="arm64"; \
+    else \
+        echo "Unsupported architecture for Quarto .deb: ${TARGETARCH}" && exit 1; \
+    fi && \
+    QUARTO_DEB_FILENAME="quarto-${QUARTO_VERSION}-linux-${QUARTO_DEB_ARCH_SUFFIX}.deb" && \
+    echo "Downloading Quarto (arch: ${TARGETARCH}) using ${QUARTO_DEB_FILENAME}" && \
     curl -fLSo /tmp/quarto.deb "https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/${QUARTO_DEB_FILENAME}" && \
-    echo "--- Downloaded Quarto package type: ---" && \
     file /tmp/quarto.deb && \
-    echo "------------------------------------" && \
-    echo "Installing Quarto from /tmp/quarto.deb" && \
-    apt-get update && \
+    # apt-get update (already run above, and should be okay before local deb install)
     apt-get install -y --no-install-recommends /tmp/quarto.deb && \
-    echo "Cleaning up Quarto download" && \
     rm -f /tmp/quarto.deb && \
-    echo "Quarto installation complete. Verifying..." && \
-    quarto --version
+    quarto --version && \
+    echo "Quarto installation complete."
 
-# Purge temporary build dependencies from apt, and clean apt cache
-# We keep tree, tar, gzip as they are small and generally useful. eza and quarto are now installed.
+# We keep tar, gzip as they are small and generally useful. eza and quarto are now installed.
 RUN apt-get purge -y --auto-remove curl file && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*

@@ -32,3 +32,32 @@ ax.set_rticks([0.5, 1, 1.5, 2])
 ax.grid(True)
 plt.show()
 ```
+
+```{python}
+#| echo: true # You can control echo per chunk
+
+from pathlib import Path
+from kedro.framework.session import KedroSession
+from kedro.framework.startup import bootstrap_project
+import pandas as pd
+
+# Assuming this QMD file is in 'docs/', the project root is one level up.
+project_path = Path.cwd().parent 
+
+# Bootstrap the Kedro project (loads settings.py, pyproject.toml, etc.)
+bootstrap_project(project_path)
+
+# Create a Kedro session to access the context
+with KedroSession.create(project_path=project_path) as session:
+    context = session.load_context()
+    catalog = context.catalog
+
+    # Load the desired dataset
+    print("Loading 'model_input_table' from the catalog...")
+    model_input_df = catalog.load("model_input_table")
+
+    print(f"Successfully loaded 'model_input_table' with {len(model_input_df)} rows.")
+
+    # Display the first 5 rows (Quarto will render pandas DataFrames nicely)
+    model_input_df.head(5)
+```

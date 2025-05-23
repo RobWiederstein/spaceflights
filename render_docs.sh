@@ -1,14 +1,19 @@
 #!/bin/bash
-# Script to render Quarto documentation
+# This script runs the Kedro pipeline and then renders the Quarto documentation.
+set -
 
-set -e # Exit immediately if a command exits with a non-zero status
+echo "" 
+echo "-------------------------- Step 1: Running Kedro Pipeline to Generate/Update Data --------------------------"
+kedro run  
+echo "-------------------------- Kedro Pipeline Finished -------------------------------------------------------"
+echo "" 
 
-echo ">>> Navigating to project root (if not already there, though WORKDIR should handle this)..."
-# cd /home/kedro_docker # WORKDIR in Dockerfile should make this the default
-
-echo ">>> Starting Quarto documentation render for the 'docs' directory..."
+echo "-------------------------- Step 2: Rendering Quarto Documentation ----------------------------------------"
 quarto render docs/
-
-echo ">>> Quarto documentation render finished."
-echo "Output should be in /home/kedro_docker/docs/_site/"
-ls -R /home/kedro_docker/docs/_site/ # List the output for verification
+echo "-------------------------- Quarto Documentation Render Finished ------------------------------------------"
+echo ""
+echo "Output generated in /home/kedro_docker/docs/_site/"
+echo "--- Top-level contents of /home/kedro_docker/docs/_site: ---"
+ls -l /home/kedro_docker/docs/_site/
+echo "----------------------------------------------------------------------------------------------------"
+echo ""
