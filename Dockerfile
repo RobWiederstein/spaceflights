@@ -1,4 +1,7 @@
-ARG BASE_IMAGE=python:3.9-slim
+#ARG BASE_IMAGE=python:3.9-slim
+#FROM $BASE_IMAGE AS runtime-environment
+
+ARG BASE_IMAGE=python:3.13-slim
 FROM $BASE_IMAGE AS runtime-environment
 
 ARG TARGETARCH
