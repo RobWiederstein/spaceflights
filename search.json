@@ -4,6 +4,27 @@
     "href": "index.html",
     "title": "My Document with Python + Kedro + Quarto",
     "section": "",
-    "text": "1 Introduction\nThis project ports the spaceflights tutorial from Kedro. Its significance is that it builds a reproducible pipeline within a broadly accepted python framework.[1] The Kedro framework envisions the use of Sphinx, the widely used Python documentation system. However, the Sphinx default was changed to Quarto.\n\n\n\n\n\n\n\n\nFigure 1: A line plot on a polar axis\n\n\n\n\n\n\nfrom pathlib import Path\nfrom kedro.framework.session import KedroSession\nfrom kedro.framework.startup import bootstrap_project\nimport pandas as pd\n\n# Assuming this QMD file is in 'docs/', the project root is one level up.\nproject_path = Path.cwd().parent \n\n# Bootstrap the Kedro project (loads settings.py, pyproject.toml, etc.)\nbootstrap_project(project_path)\n\n# Create a Kedro session to access the context\nwith KedroSession.create(project_path=project_path) as session:\n    context = session.load_context()\n    catalog = context.catalog\n\n    # Load the desired dataset\n    print(\"Loading 'model_input_table' from the catalog...\")\n    model_input_df = catalog.load(\"model_input_table\")\n\n    print(f\"Successfully loaded 'model_input_table' with {len(model_input_df)} rows.\")\n\n    # Display the first 5 rows (Quarto will render pandas DataFrames nicely)\n    model_input_df.head(5)\n\n[05/24/25 12:21:08] INFO     Using                                                                  __init__.py:272\n                             '/usr/local/lib/python3.13/site-packages/kedro/framework/project/rich_                \n                             logging.yml' as logging configuration.                                                \n\n\n\nLoading 'model_input_table' from the catalog...\n\n\n[05/24/25 12:21:09] INFO     Loading data from model_input_table (ParquetDataset)...            data_catalog.py:403\n\n\n\nSuccessfully loaded 'model_input_table' with 6027 rows.\n\n\n\n\n\n\n\nReferences\n\n[1] G. Wilson, D. A. Aruliah, C. T. Brown, N. P. C. Hong, M. Davis, R. T. Guy, S. H. D. Haddock, K. D. Huff, I. M. Mitchell, M. D. Plumbley, B. Waugh, E. P. White, and P. Wilson, “Best Practices for Scientific Computing,” PLOS Biology, vol. 12, no. 1, p. e1001745, Jan. 2014 [Online]. Available: https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001745. [Accessed: 25-Oct-2021]"
+    "text": "This project ports the spaceflights tutorial from Kedro. Its significance is that it builds a reproducible pipeline within a broadly accepted python framework.[1] The Kedro framework envisions the use of Sphinx, the widely used Python documentation system. However, the Sphinx default was changed to Quarto."
+  },
+  {
+    "objectID": "index.html#companies",
+    "href": "index.html#companies",
+    "title": "My Document with Python + Kedro + Quarto",
+    "section": "2.1 Companies",
+    "text": "2.1 Companies\n\n\n\n\nTable 1: First 5 rows of the Companies dataset.\n\n\n\n\n\n\n\n\n\nid\ncompany_rating\ncompany_location\ntotal_fleet_count\niata_approved\n\n\n\n\n3888\n100%\nIsle of Man\n1.0\nf\n\n\n46728\n100%\n\n1.0\nf\n\n\n34618\n38%\nIsle of Man\n1.0\nf\n\n\n28619\n100%\nBosnia and Herzegovina\n1.0\nf\n\n\n8240\n\nChile\n1.0\nt"
+  },
+  {
+    "objectID": "index.html#reviews",
+    "href": "index.html#reviews",
+    "title": "My Document with Python + Kedro + Quarto",
+    "section": "2.2 Reviews",
+    "text": "2.2 Reviews\n\n\n\n\n\n\n\n\nshuttle_id\nreview_scores_rating\nreview_scores_comfort\nreview_scores_amenities\nreview_scores_trip\nreview_scores_crew\nreview_scores_location\nreview_scores_price\nnumber_of_reviews\nreviews_per_month\n\n\n\n\n45163\n91.0\n10.0\n9.0\n9.0\n9.0\n9.0\n9.0\n26\n0.77\n\n\n49438\n96.0\n10.0\n10.0\n10.0\n10.0\n10.0\n9.0\n61\n0.62\n\n\n10750\n97.0\n10.0\n10.0\n10.0\n10.0\n10.0\n10.0\n467\n4.66\n\n\n4146\n95.0\n10.0\n10.0\n10.0\n10.0\n9.0\n9.0\n318\n3.22\n\n\n5067\n97.0\n10.0\n9.0\n10.0\n10.0\n9.0\n10.0\n22\n0.29"
+  },
+  {
+    "objectID": "index.html#shuttles",
+    "href": "index.html#shuttles",
+    "title": "My Document with Python + Kedro + Quarto",
+    "section": "2.3 Shuttles",
+    "text": "2.3 Shuttles\n\n\n\n\nTable 2: First 5 rows of the Shuttles dataset.\n\n\n\n\n\n\n\n\n\nid\nshuttle_location\nshuttle_type\nengine_type\nengine_vendor\nengines\npassenger_capacity\ncancellation_policy\ncrew\nd_check_complete\nmoon_clearance_complete\nprice\ncompany_id\n\n\n\n\n45163\nSao Tome and Principe\nType V5\nPlasma\nThetaBase Services\n2.0\n4\nmoderate\n2.0\nf\nf\n$1,715.0\n32413\n\n\n49438\nWallis and Futuna\nType V2\nPlasma\nThetaBase Services\n3.0\n5\nmoderate\n3.0\nf\nf\n$3,405.0\n14122\n\n\n10750\nNiue\nType F5\nQuantum\nThetaBase Services\n1.0\n2\nstrict\n1.0\nt\nf\n$1,806.0\n47761\n\n\n4146\nMalta\nType V2\nQuantum\nThetaBase Services\n1.0\n2\nmoderate\n1.0\nf\nf\n$1,676.0\n26648\n\n\n5067\nMalta\nType V2\nPlasma\nThetaBase Services\n5.0\n10\nstrict\n5.0\nf\nf\n$4,718.0\n26648\n\n\n\n\n\n\n\n\n\n\n\n\n\n[05/24/25 20:30:34] INFO     Using                                                                  __init__.py:272\n                             '/usr/local/lib/python3.13/site-packages/kedro/framework/project/rich_                \n                             logging.yml' as logging configuration.                                                \n\n\n\nLoading 'model_input_table' from the catalog...\n\n\n[05/24/25 20:30:35] INFO     Loading data from model_input_table (ParquetDataset)...            data_catalog.py:403\n\n\n\nSuccessfully loaded 'model_input_table' with 6027 rows.\n\n\n\n\n\n\n\n\n\n\n\n\n(a) Latest Confusion Matrix from the pipeline.\n\n\n\n\n\n\n\n\n\n\n(b)\n\n\n\n\n\n\nFigure 1"
   }
 ]
