@@ -125,5 +125,5 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # PYTHONWARNINGS to suppress specific Kedro deprecation warning
 ENV PYTHONWARNINGS="ignore:'kedro run' flag '--namespace' is deprecated:DeprecationWarning"
 
-# Default command to run when the container starts
+# Default command
 CMD ["kedro", "run"]
