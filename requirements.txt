@@ -7,3 +7,5 @@ kedro-viz>=6.7.0 # Update this after running pip install -U kedro-viz
 scikit-learn~=1.5.1
 seaborn~=0.12.1
 kedro-docker~=0.6.2
+great_tables
+pandas~=2.2.2

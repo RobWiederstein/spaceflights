@@ -10,11 +10,14 @@ ARG TARGETARCH
 # and general utilities. ca-certificates is good for curl https.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        curl \
-        tar \
-        gzip \
-        file \
-        ca-certificates && \
+    build-essential \
+    gcc \
+    python3-dev \
+    curl \
+    tar \
+    gzip \
+    file \
+    ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 # Install eza
