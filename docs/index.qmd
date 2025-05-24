@@ -1,19 +1,32 @@
 ---
 title: "My Document with Python + Kedro + Quarto"
-format: html
+format:
+  html:
+    theme: 
+      - united
+      #- resources/css/theme.scss
+    #mainfont: "Atkinson Hyperlegible"
+    linestretch: 1.5
+    fontsize: 1.2em
 execute:
-  echo: true
+  echo: false
+  warning: false
+  message: false
+  error: TRUE
+  eval: true
+  cache: FALSE
+number-sections: true
+number-depth: 2
+toc: true
+toc-depth: 2
+bibliography: ./resources/spaceflights.bib
+csl: ./resources/ieee.csl
+nocite: "@*"
 ---
 
-## Quarto and Python
+# Introduction
 
-Quarto enables you to weave together content and executable Python code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Python Code
-
-When you render this document, it will include both the content and the output of the embedded Python code.
-
-Here's a simple Python calculation:
+This project ports the spaceflights tutorial from Kedro.  Its significance is that it builds a reproducible pipeline within a broadly accepted python framework.[@wilson_best_2014]  The Kedro framework envisions the use of Sphinx, the widely used Python documentation system.  However, the Sphinx default was changed to Quarto. 
 
 ```{python}
 #| label: fig-polar

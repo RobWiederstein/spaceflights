@@ -1,6 +1,10 @@
 #!/bin/bash
 # This script runs the Kedro pipeline and then renders the Quarto documentation.
-set -
+set -e
+
+# Uncomment for Quarto debugging:
+export QUARTO_LOG_LEVEL=DEBUG
+export QUARTO_PRINT_STACK=true
 
 echo "" 
 echo "-------------------------- Step 1: Running Kedro Pipeline to Generate/Update Data --------------------------"

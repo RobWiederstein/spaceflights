@@ -59,9 +59,14 @@ jobs:
 
       - name: Run Pipeline and Render Documentation
         if: success()
+        env:
+          QUARTO_LOG_LEVEL_RUNNER: DEBUG
+          QUARTO_PRINT_STACK_RUNNER: true
         run: |
           echo "-------------------------- Executing Pipeline & Rendering Docs via Script ----------------------------"
           docker run --name output_generator_container \
+            -e QUARTO_LOG_LEVEL=${{ env.QUARTO_LOG_LEVEL_RUNNER }} \   
+            -e QUARTO_PRINT_STACK=${{ env.QUARTO_PRINT_STACK_RUNNER }} \ 
             ghcr.io/${{ env.OWNER_LC }}/spaceflights-app:${{ github.ref_name }} \
             ./run_and_render.sh # <-- Use your new script name here
           echo "-------------------------- Script Execution Finished in Container ------------------------------------"

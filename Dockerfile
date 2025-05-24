@@ -57,6 +57,10 @@ RUN set -e && \
     quarto --version && \
     echo "Quarto installation complete."
 
+RUN echo "Checking quarto version and installation" && \
+    quarto check && \
+    echo "Quarto verification complete."
+
 # We keep tar, gzip as they are small and generally useful. eza and quarto are now installed.
 RUN apt-get purge -y --auto-remove curl file && \
     apt-get autoremove -y && \

@@ -162,3 +162,7 @@ mlruns/*
 
 # quarto
 docs/_site/
+
+# vscode
+spaceflights.code-workspace/
+
