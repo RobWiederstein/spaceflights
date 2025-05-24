@@ -59,16 +59,27 @@ jobs:
 
       - name: Run Pipeline and Render Documentation
         if: success()
-        env:
+        env: # Environment variables for this GitHub Actions runner step
           QUARTO_LOG_LEVEL_RUNNER: DEBUG
           QUARTO_PRINT_STACK_RUNNER: true
+          # Ensure OWNER_LC is available in this step's environment.
+          # If it was set with `echo "OWNER_LC=..." >> $GITHUB_ENV` in a previous step
+          # of this *same job*, it should be available as env.OWNER_LC.
+          # If OWNER_LC is a job-level or workflow-level env var, it's also fine.
         run: |
+          echo "-------------------------- Debugging Image Name ------------------------------------"
+          echo "Value of env.OWNER_LC: '${{ env.OWNER_LC }}'"
+          echo "Value of github.repository_owner (for comparison): '${{ github.repository_owner }}'" # This is the direct GHA context
+          echo "Value of github.ref_name: '${{ github.ref_name }}'"
+          echo "Attempting to run image name: 'ghcr.io/${{ env.OWNER_LC }}/spaceflights-app:${{ github.ref_name }}'"
+          echo "----------------------------------------------------------------------------------"
+
           echo "-------------------------- Executing Pipeline & Rendering Docs via Script ----------------------------"
           docker run --name output_generator_container \
-            -e QUARTO_LOG_LEVEL=${{ env.QUARTO_LOG_LEVEL_RUNNER }} \   
-            -e QUARTO_PRINT_STACK=${{ env.QUARTO_PRINT_STACK_RUNNER }} \ 
+            -e QUARTO_LOG_LEVEL=${{ env.QUARTO_LOG_LEVEL_RUNNER }} \
+            -e QUARTO_PRINT_STACK=${{ env.QUARTO_PRINT_STACK_RUNNER }} \
             ghcr.io/${{ env.OWNER_LC }}/spaceflights-app:${{ github.ref_name }} \
-            ./run_and_render.sh # <-- Use your new script name here
+            ./run_and_render.sh
           echo "-------------------------- Script Execution Finished in Container ------------------------------------"
 
       - name: Prepare Documentation for Deployment
