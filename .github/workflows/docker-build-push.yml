@@ -72,8 +72,8 @@ jobs:
           echo "Creating directory for documentation output on runner..."
           mkdir -p ./quarto_site_to_deploy
           echo "Copying rendered Quarto site contents from Docker container..."
-          docker cp docs_renderer:/home/kedro_docker/docs/_site/. ./quarto_site_to_deploy/
-          docker rm docs_renderer
+          docker cp output_generator_container:/home/kedro_docker/docs/_site/. ./quarto_site_to_deploy/
+          docker rm output_generator_container
           echo "Contents of quarto_site_to_deploy (documentation to be deployed):"
           ls -R ./quarto_site_to_deploy
 
