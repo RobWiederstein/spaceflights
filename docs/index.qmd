@@ -141,6 +141,8 @@ display_kedro_table("model_input_table")
 
 ```{python}
 #| label: fig-conf-matrix
+#| include: false
+#| eval: false
 
 import sys
 from pathlib import Path
