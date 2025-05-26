@@ -20,8 +20,6 @@ format:
     toc-depth: 2
     number-sections: true
     number-depth: 2
-    fig-cap-location: bottom 
-    fig-prefix: "Fig."
 
 bibliography: resources/spaceflights.bib
 csl: resources/ieee.csl

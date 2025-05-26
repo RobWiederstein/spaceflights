@@ -141,8 +141,6 @@ display_kedro_table("model_input_table")
 
 ```{python}
 #| label: fig-conf-matrix
-#| fig-cap: "This is a nice figure."
-#| fig-cap-location: bottom
 
 import sys
 from pathlib import Path
@@ -263,6 +261,15 @@ else:
 ```
 
 a great figure at [@fig-conf-matrix].
+
+```{python}
+#| label: fig-test-static
+#| fig-cap: "A static test image."
+
+from IPython.display import Image
+# Assume you add a small 'test.png' to your 'docs' directory and commit it
+Image(filename="resources/moon-rocket.jpg") 
+```
 
 # References {.unnumbered}
 
