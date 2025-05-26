@@ -267,7 +267,6 @@ a great figure at [@fig-conf-matrix].
 #| fig-cap: "A static test image."
 
 from IPython.display import Image
-# Assume you add a small 'test.png' to your 'docs' directory and commit it
 Image(filename="resources/moon-rocket.jpg") 
 ```
 
