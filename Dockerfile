@@ -4,7 +4,7 @@
 ARG BASE_IMAGE=python:3.13-slim
 FROM $BASE_IMAGE AS runtime-environment
 
-ARG TARGETARCH
+#ARG TARGETARCH
 
 # Install essential OS packages needed for tree, eza download, quarto download,
 # and general utilities. ca-certificates is good for curl https.
@@ -23,41 +23,26 @@ RUN apt-get update && \
 # Install eza
 ENV EZA_VERSION="0.21.3"
 RUN set -e && \
-   EZA_ARCHIVE_PART="" && \
-    if [ "${TARGETARCH}" = "amd64" ]; then \
-        EZA_ARCHIVE_PART="x86_64-unknown-linux-musl"; \
-    elif [ "${TARGETARCH}" = "arm64" ]; then \
-        EZA_ARCHIVE_PART="aarch64-unknown-linux-gnu"; \ 
-    else \
-        echo "Unsupported architecture for eza: ${TARGETARCH}" && exit 1; \
-    fi && \
-    EZA_ARCHIVE_FILENAME="eza_${EZA_ARCHIVE_PART}.tar.gz" && \
-    echo "Downloading eza (arch: ${TARGETARCH}) using ${EZA_ARCHIVE_FILENAME}" && \
-    curl -fLSo /tmp/eza.tar.gz "https://github.com/eza-community/eza/releases/download/v${EZA_VERSION}/${EZA_ARCHIVE_FILENAME}" && \
-    file /tmp/eza.tar.gz && \
-    tar -xzf /tmp/eza.tar.gz -C /tmp && \
-    mv /tmp/eza /usr/local/bin/eza && \
-    chmod +x /usr/local/bin/eza && \
-    eza --version && \
-    rm -f /tmp/eza.tar.gz && \
-    echo "eza installation complete."
+   EZA_ARCHIVE_PART="x86_64-unknown-linux-musl" && \ # Hardcode for amd64
+   EZA_ARCHIVE_FILENAME="eza_${EZA_ARCHIVE_PART}.tar.gz" && \
+   echo "Downloading eza (arch: amd64) using ${EZA_ARCHIVE_FILENAME}" && \
+   curl -fLSo /tmp/eza.tar.gz "https://github.com/eza-community/eza/releases/download/v${EZA_VERSION}/${EZA_ARCHIVE_FILENAME}" && \
+   file /tmp/eza.tar.gz && \
+   tar -xzf /tmp/eza.tar.gz -C /tmp && \
+   mv /tmp/eza /usr/local/bin/eza && \
+   chmod +x /usr/local/bin/eza && \
+   eza --version && \
+   rm -f /tmp/eza.tar.gz && \
+   echo "eza installation complete."
 
 # Install Quarto CLI
 ENV QUARTO_VERSION="1.7.31"
 RUN set -e && \
-    QUARTO_DEB_ARCH_SUFFIX="" && \
-    if [ "${TARGETARCH}" = "amd64" ]; then \
-        QUARTO_DEB_ARCH_SUFFIX="amd64"; \
-    elif [ "${TARGETARCH}" = "arm64" ]; then \
-        QUARTO_DEB_ARCH_SUFFIX="arm64"; \
-    else \
-        echo "Unsupported architecture for Quarto .deb: ${TARGETARCH}" && exit 1; \
-    fi && \
+    QUARTO_DEB_ARCH_SUFFIX="amd64" && \ # Hardcode for amd64
     QUARTO_DEB_FILENAME="quarto-${QUARTO_VERSION}-linux-${QUARTO_DEB_ARCH_SUFFIX}.deb" && \
-    echo "Downloading Quarto (arch: ${TARGETARCH}) using ${QUARTO_DEB_FILENAME}" && \
+    echo "Downloading Quarto (arch: amd64) using ${QUARTO_DEB_FILENAME}" && \
     curl -fLSo /tmp/quarto.deb "https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/${QUARTO_DEB_FILENAME}" && \
     file /tmp/quarto.deb && \
-    # apt-get update (already run above, and should be okay before local deb install)
     apt-get install -y --no-install-recommends /tmp/quarto.deb && \
     rm -f /tmp/quarto.deb && \
     quarto --version && \
