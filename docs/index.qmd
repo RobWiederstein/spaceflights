@@ -1,39 +1,95 @@
 ---
 title: "My Document with Python + Kedro + Quarto"
-format:
-  html:
-    theme: 
-      - united
-      - resources/theme.scss
-    mainfont: "Atkinson Hyperlegible"
-    linestretch: 1.5
-    fontsize: 1.2em
-execute:
-  echo: false
-  warning: false
-  message: false
-  error: TRUE
-  eval: true
-  cache: FALSE
-number-sections: true
-number-depth: 2
-toc: true
-toc-depth: 2
-bibliography: ./resources/spaceflights.bib
-csl: ./resources/ieee.csl
-nocite: "@*"
+author: "RobWiederstein"
+date: today
 ---
 
-```{python}
-import os
-import sys
-from IPython.display import Image, display
-import pandas as pd
-import numpy as np
-from great_tables import GT
-import matplotlib.pyplot as plt
-```
 
+```{python}
+#| label: setup
+#| include: false
+
+# Standard library imports
+import os
+import sys                # <<< IMPORT SYS HERE
+from pathlib import Path
+import logging
+import datetime           # <<< IMPORT DATETIME HERE
+
+# --- ADDED FOR DEBUGGING CHUNK EXECUTION ---
+print(f"DEBUG (setup chunk): SETUP CHUNK START @ {datetime.datetime.now()}", file=sys.stderr)
+# ---
+
+# Third-party library imports
+import pandas as pd
+from IPython.display import display, Image, Markdown
+from great_tables import GT
+
+# Kedro specific imports
+from kedro.framework.session import KedroSession
+from kedro.framework.startup import bootstrap_project
+
+# --- Global Kedro Project Path Setup & Bootstrap ---
+PROJECT_ROOT_PATH = None
+INITIAL_BOOTSTRAP_ERROR = None # To store initial bootstrap error
+
+try:
+    current_qmd_dir = Path.cwd() 
+    if current_qmd_dir.name == "docs" and (current_qmd_dir.parent / "pyproject.toml").exists():
+        PROJECT_ROOT_PATH = current_qmd_dir.parent.resolve()
+    elif (current_qmd_dir / "pyproject.toml").exists(): 
+        PROJECT_ROOT_PATH = current_qmd_dir.resolve()
+    else:
+        # Fallback, though ideally one of the above should hit for your project structure
+        PROJECT_ROOT_PATH = Path("/Users/rkw/Dropbox/coding/pyproj/spaceflights").resolve() 
+        print(f"Warning (setup chunk): Using hardcoded fallback for PROJECT_ROOT_PATH: {PROJECT_ROOT_PATH}", file=sys.stderr)
+
+    if PROJECT_ROOT_PATH and PROJECT_ROOT_PATH.exists():
+        bootstrap_project(PROJECT_ROOT_PATH)
+        print(f"DEBUG (setup chunk): Kedro project bootstrapped using path: {PROJECT_ROOT_PATH}", file=sys.stderr)
+    else:
+        INITIAL_BOOTSTRAP_ERROR = f"Kedro project root could not be determined from CWD {current_qmd_dir} or detected path {PROJECT_ROOT_PATH} does not exist."
+        print(f"ERROR (setup chunk): {INITIAL_BOOTSTRAP_ERROR}", file=sys.stderr)
+        PROJECT_ROOT_PATH = None 
+
+except Exception as e:
+    PROJECT_ROOT_PATH = None 
+    INITIAL_BOOTSTRAP_ERROR = f"Initial Kedro Bootstrap Failed: {type(e).__name__} - {e}"
+    print(f"ERROR (setup chunk): {INITIAL_BOOTSTRAP_ERROR}", file=sys.stderr)
+# --- End Global Kedro Project Path Setup ---
+
+def load_kedro_dataset(dataset_name: str):
+    global INITIAL_BOOTSTRAP_ERROR 
+    global PROJECT_ROOT_PATH
+
+    if not PROJECT_ROOT_PATH: # Check if bootstrap failed
+        return pd.DataFrame({'Error': [f"Kedro project not initialized: {INITIAL_BOOTSTRAP_ERROR  or 'Unknown reason'}"]})
+    try:
+        with KedroSession.create(project_path=PROJECT_ROOT_PATH) as session:
+            context = session.load_context()
+            catalog = context.catalog
+            kedro_io_logger = logging.getLogger("kedro.io")
+            original_level = kedro_io_logger.getEffectiveLevel()
+            kedro_io_logger.setLevel(logging.WARNING)
+            data = catalog.load(dataset_name)
+            kedro_io_logger.setLevel(original_level)
+            return data
+    except Exception as e:
+        print(f"ERROR (load_kedro_dataset): Loading '{dataset_name}': {type(e).__name__} - {e}", file=sys.stderr)
+        return pd.DataFrame({'Error': [f"Failed to load dataset '{dataset_name}': {str(e)[:150]}..."]})
+
+def display_kedro_table(dataset_name: str, rows: int = 5, title_prefix: str = "First 5 Rows of"):
+    data_df = load_kedro_dataset(dataset_name)
+    table_title = f"{title_prefix} {dataset_name}"
+    if isinstance(data_df, pd.DataFrame) and 'Error' in data_df.columns and data_df.iloc[0]['Error'].startswith(("Failed to load", "Kedro project not initialized")):
+        final_gt_object = GT(data_df).tab_header(title=f"Error Displaying: {dataset_name}")
+    elif isinstance(data_df, pd.DataFrame):
+        final_gt_object = GT(data_df.head(rows)).tab_header(title=table_title)
+    else:
+        error_msg = f"Could not load or display '{dataset_name}'. Data type: {type(data_df)}. Project Initialized: {PROJECT_ROOT_PATH is not None}"
+        final_gt_object = GT(pd.DataFrame({'Status': [error_msg]}))
+    return final_gt_object
+```
 
 
 # Introduction
@@ -48,19 +104,18 @@ This project ports the spaceflights tutorial from Kedro.  Its significance is th
 ```{python}
 #| label: tbl-companies-head
 #| tbl-cap: "First 5 rows of the Companies dataset."
-#| echo: false
+#| eval: true
 
-companies_csv_path = "../data/01_raw/companies.csv"
-df_companies_5 = pd.read_csv(companies_csv_path).head(5)
-GT(df_companies_5)
+display_kedro_table("companies")
 ```
 
 ## Reviews 
 
 ```{python}
-reviews_csv_path = "../data/01_raw/reviews.csv"
-df_reviews_5 = pd.read_csv(reviews_csv_path).head(5)
-GT(df_reviews_5)
+#| label: tbl-reviews-head
+#| tbl-cap: "First 5 rows of the Reviews dataset."
+#| eval: true
+display_kedro_table("reviews")
 ```
 
 ## Shuttles
@@ -68,61 +123,32 @@ GT(df_reviews_5)
 ```{python}
 #| label: tbl-shuttles-head
 #| tbl-cap: "First 5 rows of the Shuttles dataset."
-#| echo: false # Set to true if you want to show this code
-
-# pandas should already be imported from the setup chunk.
-
-shuttles_xlsx_path = "../data/01_raw/shuttles.xlsx"
-df_shuttles_5 = pd.read_excel(shuttles_xlsx_path).head(5)
-GT(df_shuttles_5)
+#| eval: true
+display_kedro_table("shuttles")
 ```
+
+# Table
 
 ```{python}
-#| label: kedro-example
-
-from pathlib import Path
-from kedro.framework.session import KedroSession
-from kedro.framework.startup import bootstrap_project
-import pandas as pd
-
-# Assuming this QMD file is in 'docs/', the project root is one level up.
-project_path = Path.cwd().parent 
-
-# Bootstrap the Kedro project (loads settings.py, pyproject.toml, etc.)
-bootstrap_project(project_path)
-
-# Create a Kedro session to access the context
-with KedroSession.create(project_path=project_path) as session:
-    context = session.load_context()
-    catalog = context.catalog
-
-    # Load the desired dataset
-    print("Loading 'model_input_table' from the catalog...")
-    model_input_df = catalog.load("model_input_table")
-
-    print(f"Successfully loaded 'model_input_table' with {len(model_input_df)} rows.")
-
-    # Display the first 5 rows (Quarto will render pandas DataFrames nicely)
-    model_input_df.head(5)
+#| label: tbl-model-input-head
+#| tbl-cap: "First 5 rows of the Model Input Table"
+#| eval: true
+display_kedro_table("model_input_table")
 ```
 
 
-
+# Results 
 
 ```{python}
-#| label: fig-confusion-matrix
-#| fig-cap: "Latest Confusion Matrix from the pipeline."
-cm_dataset_dir = "../data/08_reporting/dummy_confusion_matrix.png"
-image_filename = "dummy_confusion_matrix.png"
+#| label: fig-conf-matrix
+#| fig-cap: "This is a nice figure."
+#| fig-cap-location: bottom
 
-latest_version_dir_name = max(
-    d for d in os.listdir(cm_dataset_dir) 
-    if os.path.isdir(os.path.join(cm_dataset_dir, d))
-)
-
-image_path = os.path.join(cm_dataset_dir, latest_version_dir_name, image_filename)
-display(Image(filename=image_path))
+image_path = "../data/08_reporting/dummy_confusion_matrix.png/2025-05-22T12.16.33.752Z/dummy_confusion_matrix.png"
+Image(filename=image_path)
 ```
+
+a great figure at [@fig-conf-matrix] or [@fig-confusion-matrix]
 
 # References {.unnumbered}
 

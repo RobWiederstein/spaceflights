@@ -38,40 +38,39 @@
 # The Data Catalog supports being able to reference the same file using two different Dataset implementations
 # (transcoding), templating and a way to reuse arguments that are frequently repeated. See more here:
 # https://docs.kedro.org/en/stable/data/data_catalog.html
-
 companies:
-  type: pandas.CSVDataset
+  type: kedro_datasets.pandas.CSVDataset # MODIFIED
   filepath: data/01_raw/companies.csv
 
 reviews:
-  type: pandas.CSVDataset
+  type: kedro_datasets.pandas.CSVDataset # MODIFIED
   filepath: data/01_raw/reviews.csv
 
 shuttles:
-  type: pandas.ExcelDataset
+  type: kedro_datasets.pandas.ExcelDataset # MODIFIED
   filepath: data/01_raw/shuttles.xlsx
   load_args:
     engine: openpyxl
 
 preprocessed_companies:
-  type: pandas.ParquetDataset
+  type: kedro_datasets.pandas.ParquetDataset # MODIFIED
   filepath: data/02_intermediate/preprocessed_companies.parquet
 
 preprocessed_shuttles:
-  type: pandas.ParquetDataset
+  type: kedro_datasets.pandas.ParquetDataset # MODIFIED
   filepath: data/02_intermediate/preprocessed_shuttles.parquet
 
 model_input_table:
-  type: pandas.ParquetDataset
+  type: kedro_datasets.pandas.ParquetDataset # MODIFIED
   filepath: data/03_primary/model_input_table.parquet
 
 regressor:
-  type: pickle.PickleDataset
+  type: kedro_datasets.pickle.PickleDataset # MODIFIED
   filepath: data/06_models/regressor.pickle
   versioned: true
 
 shuttle_passenger_capacity_plot_exp:
-  type: plotly.PlotlyDataset
+  type: kedro_datasets.plotly.PlotlyDataset # MODIFIED
   filepath: data/08_reporting/shuttle_passenger_capacity_plot_exp.json
   versioned: true
   plotly_args:
@@ -86,11 +85,12 @@ shuttle_passenger_capacity_plot_exp:
       title: Shuttle Passenger capacity
 
 shuttle_passenger_capacity_plot_go:
-  type: plotly.JSONDataset
+  type: kedro_datasets.plotly.JSONDataset # MODIFIED
   filepath: data/08_reporting/shuttle_passenger_capacity_plot_go.json
   versioned: true
 
 dummy_confusion_matrix:
-  type: matplotlib.MatplotlibWriter
+  #type: kedro.extras.datasets.matplotlib.MatplotlibDataset # This was the old incorrect path
+  type: kedro_datasets.matplotlib.MatplotlibWriter # This one is correct for kedro-datasets==6.0.0
   filepath: data/08_reporting/dummy_confusion_matrix.png
   versioned: true

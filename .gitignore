@@ -166,3 +166,4 @@ docs/_site/
 # vscode
 spaceflights.code-workspace/
 
+.Rproj.user

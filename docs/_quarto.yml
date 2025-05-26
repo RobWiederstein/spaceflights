@@ -1,17 +1,36 @@
-# docs/_quarto.yml
 project:
   type: website
-  output-dir: _site 
+  output-dir: _site
 
 website:
   title: "Spaceflights"
   navbar:
     left:
-      - href: index.qmd  
-        text: Home      
+      - href: index.qmd
+        text: Home
 
 format:
   html:
-    theme: cosmo  
-    toc: true      
-    css: styles.css
+    theme: flatly
+    #  - resources/theme.scss
+    mainfont: "Atkinson Hyperlegible"
+    linestretch: 1.5
+    fontsize: 1.2em
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    number-depth: 2
+    fig-cap-location: bottom 
+    fig-prefix: "Fig."
+
+bibliography: resources/spaceflights.bib
+csl: resources/ieee.csl
+nocite: "@*"
+
+execute:
+  echo: false
+  warning: false
+  message: false
+  error: true
+  eval: true
+  cache: false
