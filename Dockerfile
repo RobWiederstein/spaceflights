@@ -36,9 +36,11 @@ RUN set -e && \
    echo "eza installation complete."
 
 # Install Quarto CLI
-ENV QUARTO_VERSION="1.7.31"
+ENV QUARTO_VERSION="1.7.31" # This correctly sets an environment variable
+
 RUN set -e && \
-    QUARTO_DEB_ARCH_SUFFIX="amd64" && \ # Hardcode for amd64
+    # These are shell variables, local to this RUN command
+    QUARTO_DEB_ARCH_SUFFIX="amd64" && \
     QUARTO_DEB_FILENAME="quarto-${QUARTO_VERSION}-linux-${QUARTO_DEB_ARCH_SUFFIX}.deb" && \
     echo "Downloading Quarto (arch: amd64) using ${QUARTO_DEB_FILENAME}" && \
     curl -fLSo /tmp/quarto.deb "https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/${QUARTO_DEB_FILENAME}" && \
