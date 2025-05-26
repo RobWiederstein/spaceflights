@@ -258,6 +258,7 @@ else:
         except:
             pass # Avoid errors during critical error handling
     Markdown(f"**{fallback_error_msg}**")
+    final_output
 ```
 
 a great figure at [@fig-conf-matrix].
