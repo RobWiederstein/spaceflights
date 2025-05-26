@@ -23,7 +23,7 @@ RUN apt-get update && \
 # Install eza
 ENV EZA_VERSION="0.21.3"
 RUN set -e && \
-   EZA_ARCHIVE_PART="x86_64-unknown-linux-musl" && \ # Hardcode for amd64
+   EZA_ARCHIVE_PART="x86_64-unknown-linux-musl" && \ 
    EZA_ARCHIVE_FILENAME="eza_${EZA_ARCHIVE_PART}.tar.gz" && \
    echo "Downloading eza (arch: amd64) using ${EZA_ARCHIVE_FILENAME}" && \
    curl -fLSo /tmp/eza.tar.gz "https://github.com/eza-community/eza/releases/download/v${EZA_VERSION}/${EZA_ARCHIVE_FILENAME}" && \
