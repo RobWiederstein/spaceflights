@@ -36,7 +36,7 @@ RUN set -e && \
    echo "eza installation complete."
 
 # Install Quarto CLI
-ENV QUARTO_VERSION="1.7.31" # This correctly sets an environment variable
+ENV QUARTO_VERSION="1.7.31"
 
 RUN set -e && \
     # These are shell variables, local to this RUN command
