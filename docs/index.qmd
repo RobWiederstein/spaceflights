@@ -161,7 +161,7 @@ if 'PROJECT_ROOT_PATH' in globals() and PROJECT_ROOT_PATH:
     dataset_base_dir = PROJECT_ROOT_PATH / "data" / "08_reporting" / "dummy_confusion_matrix.png"
     image_actual_filename = "dummy_confusion_matrix.png" # The name of the file within each version folder
 
-    print(f"DEBUG (fig-conf-matrix): Checking dataset base directory: {dataset_base_dir}", file=sys.stderr, flush = TRUE)
+    print(f"DEBUG (fig-conf-matrix): Checking dataset base directory: {dataset_base_dir}", file=sys.stderr, flush = True)
 
     if dataset_base_dir.is_dir():
         # Get all subdirectories (these should be the version folders)
@@ -172,25 +172,25 @@ if 'PROJECT_ROOT_PATH' in globals() and PROJECT_ROOT_PATH:
             latest_version_dir = max(version_subdirs, key=lambda d: d.name)
             dynamic_image_path = latest_version_dir / image_actual_filename
             
-            print(f"DEBUG (fig-conf-matrix): Dynamically determined image path: {dynamic_image_path}", file=sys.stderr, flush = TRUE)
+            print(f"DEBUG (fig-conf-matrix): Dynamically determined image path: {dynamic_image_path}", file=sys.stderr, flush = True)
 
             if dynamic_image_path.is_file():
                 final_output = Image(filename=str(dynamic_image_path))
             else:
                 error_msg = f"ERROR: Image file not found at dynamically determined path: {dynamic_image_path}"
-                print(error_msg, file=sys.stderr, flush = TRUE)
+                print(error_msg, file=sys.stderr, flush = True)
                 final_output = Markdown(f"**{error_msg}**")
         else:
             error_msg = f"ERROR: No versioned subdirectories found in: {dataset_base_dir}"
-            print(error_msg, file=sys.stderr, flush = TRUE)
+            print(error_msg, file=sys.stderr, flush = True)
             final_output = Markdown(f"**{error_msg}**")
     else:
         error_msg = f"ERROR: Dataset base directory not found: {dataset_base_dir}"
-        print(error_msg, file=sys.stderr, flush = TRUE)
+        print(error_msg, file=sys.stderr, flush = True)
         final_output = Markdown(f"**{error_msg}**")
 else:
     error_msg = "ERROR: Kedro 'PROJECT_ROOT_PATH' not found. Cannot locate image. Check setup chunk."
-    print(error_msg, file=sys.stderr, flush = TRUE)
+    print(error_msg, file=sys.stderr, flush = True)
     final_output = Markdown(f"**{error_msg}**")
 
 if final_output:
