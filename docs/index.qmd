@@ -144,60 +144,122 @@ display_kedro_table("model_input_table")
 #| fig-cap: "This is a nice figure."
 #| fig-cap-location: bottom
 
-import sys # For printing debug messages
+import sys
 from pathlib import Path
-from IPython.display import Image, Markdown # Import Markdown for error messages
+from IPython.display import Image, Markdown
+import datetime # Ensure datetime is imported for logging
 
-# This assumes PROJECT_ROOT_PATH is correctly defined in your 'setup' chunk
-# and is accessible in the global scope of the Quarto Python kernel.
-# If it's not, you might need to re-run the relevant part of your setup logic
-# or ensure it's properly shared.
+# --- Debug logging setup for this chunk ---
+_fig_matrix_log_lines = []
+def _log_fig_matrix_debug(message):
+    """Helper to format and collect log messages for this chunk."""
+    timestamp = datetime.datetime.now().isoformat()
+    _fig_matrix_log_lines.append(f"{timestamp} [fig-conf-matrix]: {message}\n")
+# --- End Debug logging setup ---
 
+_log_fig_matrix_debug("--- CHUNK EXECUTION START ---")
 final_output = None
+# Define the path for the debug log file INSIDE the container.
+# This log will be created in the same directory as your index.qmd (docs/)
+# which should be the current working directory for Quarto Python chunks.
+# Or, more robustly, use PROJECT_ROOT_PATH if it's reliably set from your setup chunk.
 
-if 'PROJECT_ROOT_PATH' in globals() and PROJECT_ROOT_PATH:
-    # This is the directory for the 'dummy_confusion_matrix.png' dataset in Kedro
-    # It contains the versioned subdirectories.
-    dataset_base_dir = PROJECT_ROOT_PATH / "data" / "08_reporting" / "dummy_confusion_matrix.png"
-    image_actual_filename = "dummy_confusion_matrix.png" # The name of the file within each version folder
+# Attempt to determine a reliable path for the debug log file
+_debug_log_file_path_str = "fig_matrix_debug.log" # Default to current dir (docs/)
+try:
+    if 'PROJECT_ROOT_PATH' in globals() and PROJECT_ROOT_PATH and isinstance(PROJECT_ROOT_PATH, Path):
+        # Place it in the docs directory for easier access by `run_and_render.sh` later
+        # This assumes PROJECT_ROOT_PATH is the root of your Kedro project.
+        _debug_log_file = PROJECT_ROOT_PATH / "docs" / _debug_log_file_path_str
+        _log_fig_matrix_debug(f"PROJECT_ROOT_PATH is '{PROJECT_ROOT_PATH}'. Debug log target: '{_debug_log_file}'")
+    else:
+        # Fallback if PROJECT_ROOT_PATH isn't available or not a Path.
+        # This relies on Quarto's CWD being the 'docs' directory.
+        _debug_log_file = Path.cwd() / _debug_log_file_path_str
+        _log_fig_matrix_debug(f"PROJECT_ROOT_PATH not found or invalid. Using CWD for log: '{_debug_log_file}'")
+except Exception as e_path_setup:
+    _log_fig_matrix_debug(f"CRITICAL: Error setting up debug log path: {e_path_setup}. Defaulting to local name '{_debug_log_file_path_str}'")
+    _debug_log_file = Path(_debug_log_file_path_str)
 
-    print(f"DEBUG (fig-conf-matrix): Checking dataset base directory: {dataset_base_dir}", file=sys.stderr, flush = True)
+
+# Your existing dynamic path logic, now using _log_fig_matrix_debug
+if 'PROJECT_ROOT_PATH' in globals() and PROJECT_ROOT_PATH and isinstance(PROJECT_ROOT_PATH, Path):
+    dataset_folder_name = "dummy_confusion_matrix.png" # This is the Kedro dataset NAME, which becomes a directory
+    image_actual_filename = "dummy_confusion_matrix.png" # The actual image file within the version folder
+    
+    dataset_base_dir = PROJECT_ROOT_PATH / "data" / "08_reporting" / dataset_folder_name
+    _log_fig_matrix_debug(f"Constructed dataset_base_dir: '{dataset_base_dir}'")
 
     if dataset_base_dir.is_dir():
-        # Get all subdirectories (these should be the version folders)
+        _log_fig_matrix_debug(f"'{dataset_base_dir}' IS a directory.")
         version_subdirs = [d for d in dataset_base_dir.iterdir() if d.is_dir()]
+        _log_fig_matrix_debug(f"Found version subdirectories: {[d.name for d in version_subdirs]}")
 
         if version_subdirs:
-            # Sort by name to find the latest (assuming timestamps are sortable, e.g., ISO format)
+            _log_fig_matrix_debug(f"Attempting to find max of version names: {[d.name for d in version_subdirs]}")
             latest_version_dir = max(version_subdirs, key=lambda d: d.name)
+            _log_fig_matrix_debug(f"Latest version directory selected: '{latest_version_dir.name}' (Path: '{latest_version_dir}')")
             dynamic_image_path = latest_version_dir / image_actual_filename
-            
-            print(f"DEBUG (fig-conf-matrix): Dynamically determined image path: {dynamic_image_path}", file=sys.stderr, flush = True)
+            _log_fig_matrix_debug(f"Dynamically determined image path: '{dynamic_image_path}'")
 
             if dynamic_image_path.is_file():
+                _log_fig_matrix_debug(f"Image file IS FOUND at '{dynamic_image_path}'. Creating Image object.")
                 final_output = Image(filename=str(dynamic_image_path))
             else:
-                error_msg = f"ERROR: Image file not found at dynamically determined path: {dynamic_image_path}"
-                print(error_msg, file=sys.stderr, flush = True)
+                error_msg = f"ERROR: Image file NOT FOUND at '{dynamic_image_path}'."
+                _log_fig_matrix_debug(error_msg)
                 final_output = Markdown(f"**{error_msg}**")
-        else:
-            error_msg = f"ERROR: No versioned subdirectories found in: {dataset_base_dir}"
-            print(error_msg, file=sys.stderr, flush = True)
+        else: # No version_subdirs
+            error_msg = f"ERROR: No versioned subdirectories found in '{dataset_base_dir}'."
+            _log_fig_matrix_debug(error_msg)
             final_output = Markdown(f"**{error_msg}**")
-    else:
-        error_msg = f"ERROR: Dataset base directory not found: {dataset_base_dir}"
-        print(error_msg, file=sys.stderr, flush = True)
+    else: # dataset_base_dir not a dir
+        error_msg = f"ERROR: Dataset base directory NOT FOUND or is not a directory: '{dataset_base_dir}'."
+        _log_fig_matrix_debug(error_msg)
         final_output = Markdown(f"**{error_msg}**")
-else:
-    error_msg = "ERROR: Kedro 'PROJECT_ROOT_PATH' not found. Cannot locate image. Check setup chunk."
-    print(error_msg, file=sys.stderr, flush = True)
+else: # PROJECT_ROOT_PATH not found or not a Path
+    error_msg = f"ERROR: Kedro 'PROJECT_ROOT_PATH' not found in globals, is None, or not a Path object. Check setup chunk. Value: {globals().get('PROJECT_ROOT_PATH')}"
+    _log_fig_matrix_debug(error_msg)
     final_output = Markdown(f"**{error_msg}**")
 
-if final_output:
-    final_output # This ensures the Image or Markdown error is the last expression rendered
+_log_fig_matrix_debug(f"--- CHUNK EXECUTION END. final_output type is {type(final_output)} ---")
+
+# --- Write collected logs to the debug file ---
+if _debug_log_file:
+    try:
+        # Open in "w" mode to overwrite the log for this specific chunk execution each time Quarto runs it
+        with open(_debug_log_file, "w") as f:
+            f.write("Log from fig-conf-matrix chunk:\n") # Add a header to the log file
+            for line in _fig_matrix_log_lines:
+                f.write(line)
+        # This print to stderr might still not show up in CI main log, but the file should be written.
+        print(f"INFO [fig-conf-matrix]: Debug messages for this chunk were written to '{_debug_log_file}'", file=sys.stderr, flush=True)
+    except Exception as e_write_log:
+        # If writing to file fails, as a last resort, try printing collected logs to stderr
+        print(f"CRITICAL_ERROR [fig-conf-matrix]: Failed to write to debug log file '{_debug_log_file}': {e_write_log}", file=sys.stderr, flush=True)
+        print("--- BEGIN FALLBACK STDERR LOG DUMP (fig-conf-matrix) ---", file=sys.stderr, flush=True)
+        for line in _fig_matrix_log_lines:
+            print(line.strip(), file=sys.stderr, flush=True) # .strip() to remove trailing newline for cleaner print
+        print("--- END FALLBACK STDERR LOG DUMP (fig-conf-matrix) ---", file=sys.stderr, flush=True)
 else:
-    # Fallback if final_output somehow wasn't set
-    Markdown("**Error: No output could be generated for the figure.**")
+    print(f"CRITICAL_ERROR [fig-conf-matrix]: _debug_log_file path was not set. Cannot write debug log to file.", file=sys.stderr, flush=True)
+# --- End writing logs ---
+
+# Ensure final_output is the last expression
+if final_output:
+    final_output
+else:
+    # This should ideally not be reached if all code paths set final_output to at least a Markdown error.
+    fallback_error_msg = "FATAL_ERROR [fig-conf-matrix]: No output (Image or Markdown error) was assigned to final_output."
+    _log_fig_matrix_debug(fallback_error_msg) # Log this critical failure too
+    # Attempt to write the log lines again if we reached here and _debug_log_file is defined
+    if _debug_log_file:
+        try:
+            with open(_debug_log_file, "a") as f: # Append this very critical error
+                 f.write(f"{datetime.datetime.now().isoformat()} [fig-conf-matrix]: {fallback_error_msg}\n")
+        except:
+            pass # Avoid errors during critical error handling
+    Markdown(f"**{fallback_error_msg}**")
 ```
 
 a great figure at [@fig-conf-matrix].
