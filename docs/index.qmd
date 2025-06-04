@@ -52,7 +52,6 @@ def pull_latest_version_plot(
 
     # 5) Display it
     display(Image(filename=str(img_path)))
-
 ```
 
 
@@ -119,7 +118,7 @@ display(Image(filename=img_path))
 ```
 
 ```{python}
-pull_latest_version_plot(name="dummy_confusion_matrix", base_dir="../data/08_reporting")
+pull_latest_version_plot(name="dummy_confusion_matrix.png", base_dir="../data/08_reporting")
 ```
 
 
