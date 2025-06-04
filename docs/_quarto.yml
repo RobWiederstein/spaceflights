@@ -9,17 +9,17 @@ website:
       - href: index.qmd
         text: Home
 
-#format:
-#  html:
-#    theme: flatly
-#    #  - resources/theme.scss
-#    mainfont: "Atkinson Hyperlegible"
-#    linestretch: 1.5
-#    fontsize: 1.2em
-#    toc: true
-#    toc-depth: 2#
-#    number-sections: true
-#    number-depth: 2
+format:
+ html:
+   theme: flatly
+   #  - resources/theme.scss
+   mainfont: "Atkinson Hyperlegible"
+   linestretch: 1.5
+   fontsize: 1.2em
+   toc: true
+   toc-depth: 2
+   number-sections: true
+   number-depth: 2
 
 bibliography: resources/spaceflights.bib
 csl: resources/ieee.csl

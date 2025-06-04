@@ -1,6 +1,6 @@
 ---
-title: "My Document with Python + Kedro + Quarto"
-author: "RobWiederstein"
+title: "A Reproducible Example Using the Spaceflights Tutorial"
+author: "Rob Wiederstein"
 date: today
 ---
 
@@ -11,90 +11,30 @@ date: today
 
 # Standard library imports
 import os
-import sys                # <<< IMPORT SYS HERE
+import sys
 from pathlib import Path
 import logging
-import datetime           # <<< IMPORT DATETIME HERE
-
-# --- ADDED FOR DEBUGGING CHUNK EXECUTION ---
-print(f"DEBUG (setup chunk): SETUP CHUNK START @ {datetime.datetime.now()}", file=sys.stderr)
-# ---
+import datetime
 
 # Third-party library imports
 import pandas as pd
 from IPython.display import display, Image, Markdown
 from great_tables import GT
-
-# Kedro specific imports
-from kedro.framework.session import KedroSession
-from kedro.framework.startup import bootstrap_project
-
-# --- Global Kedro Project Path Setup & Bootstrap ---
-PROJECT_ROOT_PATH = None
-INITIAL_BOOTSTRAP_ERROR = None # To store initial bootstrap error
-
-try:
-    current_qmd_dir = Path.cwd() 
-    if current_qmd_dir.name == "docs" and (current_qmd_dir.parent / "pyproject.toml").exists():
-        PROJECT_ROOT_PATH = current_qmd_dir.parent.resolve()
-    elif (current_qmd_dir / "pyproject.toml").exists(): 
-        PROJECT_ROOT_PATH = current_qmd_dir.resolve()
-    else:
-        # Fallback, though ideally one of the above should hit for your project structure
-        PROJECT_ROOT_PATH = Path("/Users/rkw/Dropbox/coding/pyproj/spaceflights").resolve() 
-        print(f"Warning (setup chunk): Using hardcoded fallback for PROJECT_ROOT_PATH: {PROJECT_ROOT_PATH}", file=sys.stderr)
-
-    if PROJECT_ROOT_PATH and PROJECT_ROOT_PATH.exists():
-        bootstrap_project(PROJECT_ROOT_PATH)
-        print(f"DEBUG (setup chunk): Kedro project bootstrapped using path: {PROJECT_ROOT_PATH}", file=sys.stderr)
-    else:
-        INITIAL_BOOTSTRAP_ERROR = f"Kedro project root could not be determined from CWD {current_qmd_dir} or detected path {PROJECT_ROOT_PATH} does not exist."
-        print(f"ERROR (setup chunk): {INITIAL_BOOTSTRAP_ERROR}", file=sys.stderr)
-        PROJECT_ROOT_PATH = None 
-
-except Exception as e:
-    PROJECT_ROOT_PATH = None 
-    INITIAL_BOOTSTRAP_ERROR = f"Initial Kedro Bootstrap Failed: {type(e).__name__} - {e}"
-    print(f"ERROR (setup chunk): {INITIAL_BOOTSTRAP_ERROR}", file=sys.stderr)
-# --- End Global Kedro Project Path Setup ---
-
-def load_kedro_dataset(dataset_name: str):
-    global INITIAL_BOOTSTRAP_ERROR 
-    global PROJECT_ROOT_PATH
-
-    if not PROJECT_ROOT_PATH: # Check if bootstrap failed
-        return pd.DataFrame({'Error': [f"Kedro project not initialized: {INITIAL_BOOTSTRAP_ERROR  or 'Unknown reason'}"]})
-    try:
-        with KedroSession.create(project_path=PROJECT_ROOT_PATH) as session:
-            context = session.load_context()
-            catalog = context.catalog
-            kedro_io_logger = logging.getLogger("kedro.io")
-            original_level = kedro_io_logger.getEffectiveLevel()
-            kedro_io_logger.setLevel(logging.WARNING)
-            data = catalog.load(dataset_name)
-            kedro_io_logger.setLevel(original_level)
-            return data
-    except Exception as e:
-        print(f"ERROR (load_kedro_dataset): Loading '{dataset_name}': {type(e).__name__} - {e}", file=sys.stderr)
-        return pd.DataFrame({'Error': [f"Failed to load dataset '{dataset_name}': {str(e)[:150]}..."]})
-
-def display_kedro_table(dataset_name: str, rows: int = 5, title_prefix: str = "First 5 Rows of"):
-    data_df = load_kedro_dataset(dataset_name)
-    table_title = f"{title_prefix} {dataset_name}"
-    if isinstance(data_df, pd.DataFrame) and 'Error' in data_df.columns and data_df.iloc[0]['Error'].startswith(("Failed to load", "Kedro project not initialized")):
-        final_gt_object = GT(data_df).tab_header(title=f"Error Displaying: {dataset_name}")
-    elif isinstance(data_df, pd.DataFrame):
-        final_gt_object = GT(data_df.head(rows)).tab_header(title=table_title)
-    else:
-        error_msg = f"Could not load or display '{dataset_name}'. Data type: {type(data_df)}. Project Initialized: {PROJECT_ROOT_PATH is not None}"
-        final_gt_object = GT(pd.DataFrame({'Status': [error_msg]}))
-    return final_gt_object
 ```
 
 
 # Introduction
 
-This project ports the spaceflights tutorial from Kedro.  Its significance is that it builds a reproducible pipeline within a broadly accepted python framework.[@wilson_best_2014]  The Kedro framework envisions the use of Sphinx, the widely used Python documentation system.  However, the Sphinx default was changed to Quarto. 
+This project ports the spaceflights tutorial from [Kedro](https://kedro.org/).  Its significance is that it builds a reproducible pipeline within a broadly accepted python framework.[@wilson_best_2014]  The Kedro framework envisions the use of Sphinx, the widely used Python documentation system.  However, the Sphinx default was changed to Quarto. 
+
+
+```{python}
+#| label: fig-test-static
+#| fig-cap: "A moon rocket."
+
+from IPython.display import Image
+Image(filename="resources/moon-rocket.jpg") 
+```
 
 
 # Datasets
@@ -104,9 +44,8 @@ This project ports the spaceflights tutorial from Kedro.  Its significance is th
 ```{python}
 #| label: tbl-companies-head
 #| tbl-cap: "First 5 rows of the Companies dataset."
-#| eval: true
-
-display_kedro_table("companies")
+df = pd.read_csv("../data/01_raw/companies.csv")
+df.head(5)
 ```
 
 ## Reviews 
@@ -114,8 +53,8 @@ display_kedro_table("companies")
 ```{python}
 #| label: tbl-reviews-head
 #| tbl-cap: "First 5 rows of the Reviews dataset."
-#| eval: true
-display_kedro_table("reviews")
+df = pd.read_csv("../data/01_raw/reviews.csv")
+df.head(5)
 ```
 
 ## Shuttles
@@ -123,155 +62,30 @@ display_kedro_table("reviews")
 ```{python}
 #| label: tbl-shuttles-head
 #| tbl-cap: "First 5 rows of the Shuttles dataset."
-#| eval: true
-display_kedro_table("shuttles")
+df = pd.read_excel("../data/01_raw/shuttles.xlsx")
+df.head(5)
 ```
 
-# Table
+# Model Inputs
 
 ```{python}
 #| label: tbl-model-input-head
 #| tbl-cap: "First 5 rows of the Model Input Table"
-#| eval: true
-display_kedro_table("model_input_table")
+df = pd.read_parquet("../data/03_primary/model_input_table.parquet")
+df.head(5)
 ```
 
 
 # Results 
-
 ```{python}
-#| label: fig-conf-matrix
-#| include: false
-#| eval: false
-
-import sys
-from pathlib import Path
-from IPython.display import Image, Markdown
-import datetime # Ensure datetime is imported for logging
-
-# --- Debug logging setup for this chunk ---
-_fig_matrix_log_lines = []
-def _log_fig_matrix_debug(message):
-    """Helper to format and collect log messages for this chunk."""
-    timestamp = datetime.datetime.now().isoformat()
-    _fig_matrix_log_lines.append(f"{timestamp} [fig-conf-matrix]: {message}\n")
-# --- End Debug logging setup ---
-
-_log_fig_matrix_debug("--- CHUNK EXECUTION START ---")
-final_output = None
-# Define the path for the debug log file INSIDE the container.
-# This log will be created in the same directory as your index.qmd (docs/)
-# which should be the current working directory for Quarto Python chunks.
-# Or, more robustly, use PROJECT_ROOT_PATH if it's reliably set from your setup chunk.
-
-# Attempt to determine a reliable path for the debug log file
-_debug_log_file_path_str = "fig_matrix_debug.log" # Default to current dir (docs/)
-try:
-    if 'PROJECT_ROOT_PATH' in globals() and PROJECT_ROOT_PATH and isinstance(PROJECT_ROOT_PATH, Path):
-        # Place it in the docs directory for easier access by `run_and_render.sh` later
-        # This assumes PROJECT_ROOT_PATH is the root of your Kedro project.
-        _debug_log_file = PROJECT_ROOT_PATH / "docs" / _debug_log_file_path_str
-        _log_fig_matrix_debug(f"PROJECT_ROOT_PATH is '{PROJECT_ROOT_PATH}'. Debug log target: '{_debug_log_file}'")
-    else:
-        # Fallback if PROJECT_ROOT_PATH isn't available or not a Path.
-        # This relies on Quarto's CWD being the 'docs' directory.
-        _debug_log_file = Path.cwd() / _debug_log_file_path_str
-        _log_fig_matrix_debug(f"PROJECT_ROOT_PATH not found or invalid. Using CWD for log: '{_debug_log_file}'")
-except Exception as e_path_setup:
-    _log_fig_matrix_debug(f"CRITICAL: Error setting up debug log path: {e_path_setup}. Defaulting to local name '{_debug_log_file_path_str}'")
-    _debug_log_file = Path(_debug_log_file_path_str)
-
-
-# Your existing dynamic path logic, now using _log_fig_matrix_debug
-if 'PROJECT_ROOT_PATH' in globals() and PROJECT_ROOT_PATH and isinstance(PROJECT_ROOT_PATH, Path):
-    dataset_folder_name = "dummy_confusion_matrix.png" # This is the Kedro dataset NAME, which becomes a directory
-    image_actual_filename = "dummy_confusion_matrix.png" # The actual image file within the version folder
-    
-    dataset_base_dir = PROJECT_ROOT_PATH / "data" / "08_reporting" / dataset_folder_name
-    _log_fig_matrix_debug(f"Constructed dataset_base_dir: '{dataset_base_dir}'")
-
-    if dataset_base_dir.is_dir():
-        _log_fig_matrix_debug(f"'{dataset_base_dir}' IS a directory.")
-        version_subdirs = [d for d in dataset_base_dir.iterdir() if d.is_dir()]
-        _log_fig_matrix_debug(f"Found version subdirectories: {[d.name for d in version_subdirs]}")
-
-        if version_subdirs:
-            _log_fig_matrix_debug(f"Attempting to find max of version names: {[d.name for d in version_subdirs]}")
-            latest_version_dir = max(version_subdirs, key=lambda d: d.name)
-            _log_fig_matrix_debug(f"Latest version directory selected: '{latest_version_dir.name}' (Path: '{latest_version_dir}')")
-            dynamic_image_path = latest_version_dir / image_actual_filename
-            _log_fig_matrix_debug(f"Dynamically determined image path: '{dynamic_image_path}'")
-
-            if dynamic_image_path.is_file():
-                _log_fig_matrix_debug(f"Image file IS FOUND at '{dynamic_image_path}'. Creating Image object.")
-                final_output = Image(filename=str(dynamic_image_path))
-            else:
-                error_msg = f"ERROR: Image file NOT FOUND at '{dynamic_image_path}'."
-                _log_fig_matrix_debug(error_msg)
-                final_output = Markdown(f"**{error_msg}**")
-        else: # No version_subdirs
-            error_msg = f"ERROR: No versioned subdirectories found in '{dataset_base_dir}'."
-            _log_fig_matrix_debug(error_msg)
-            final_output = Markdown(f"**{error_msg}**")
-    else: # dataset_base_dir not a dir
-        error_msg = f"ERROR: Dataset base directory NOT FOUND or is not a directory: '{dataset_base_dir}'."
-        _log_fig_matrix_debug(error_msg)
-        final_output = Markdown(f"**{error_msg}**")
-else: # PROJECT_ROOT_PATH not found or not a Path
-    error_msg = f"ERROR: Kedro 'PROJECT_ROOT_PATH' not found in globals, is None, or not a Path object. Check setup chunk. Value: {globals().get('PROJECT_ROOT_PATH')}"
-    _log_fig_matrix_debug(error_msg)
-    final_output = Markdown(f"**{error_msg}**")
-
-_log_fig_matrix_debug(f"--- CHUNK EXECUTION END. final_output type is {type(final_output)} ---")
-
-# --- Write collected logs to the debug file ---
-if _debug_log_file:
-    try:
-        # Open in "w" mode to overwrite the log for this specific chunk execution each time Quarto runs it
-        with open(_debug_log_file, "w") as f:
-            f.write("Log from fig-conf-matrix chunk:\n") # Add a header to the log file
-            for line in _fig_matrix_log_lines:
-                f.write(line)
-        # This print to stderr might still not show up in CI main log, but the file should be written.
-        print(f"INFO [fig-conf-matrix]: Debug messages for this chunk were written to '{_debug_log_file}'", file=sys.stderr, flush=True)
-    except Exception as e_write_log:
-        # If writing to file fails, as a last resort, try printing collected logs to stderr
-        print(f"CRITICAL_ERROR [fig-conf-matrix]: Failed to write to debug log file '{_debug_log_file}': {e_write_log}", file=sys.stderr, flush=True)
-        print("--- BEGIN FALLBACK STDERR LOG DUMP (fig-conf-matrix) ---", file=sys.stderr, flush=True)
-        for line in _fig_matrix_log_lines:
-            print(line.strip(), file=sys.stderr, flush=True) # .strip() to remove trailing newline for cleaner print
-        print("--- END FALLBACK STDERR LOG DUMP (fig-conf-matrix) ---", file=sys.stderr, flush=True)
-else:
-    print(f"CRITICAL_ERROR [fig-conf-matrix]: _debug_log_file path was not set. Cannot write debug log to file.", file=sys.stderr, flush=True)
-# --- End writing logs ---
-
-# Ensure final_output is the last expression
-if final_output:
-    final_output
-else:
-    # This should ideally not be reached if all code paths set final_output to at least a Markdown error.
-    fallback_error_msg = "FATAL_ERROR [fig-conf-matrix]: No output (Image or Markdown error) was assigned to final_output."
-    _log_fig_matrix_debug(fallback_error_msg) # Log this critical failure too
-    # Attempt to write the log lines again if we reached here and _debug_log_file is defined
-    if _debug_log_file:
-        try:
-            with open(_debug_log_file, "a") as f: # Append this very critical error
-                 f.write(f"{datetime.datetime.now().isoformat()} [fig-conf-matrix]: {fallback_error_msg}\n")
-        except:
-            pass # Avoid errors during critical error handling
-    Markdown(f"**{fallback_error_msg}**")
-    final_output
+#| label: fig-confusion-matrix
+#| fig-cap: "Results."
+img_path = "../data/08_reporting/dummy_confusion_matrix.png/2025-05-22T12.16.33.752Z/dummy_confusion_matrix.png"
+display(Image(filename=img_path))
 ```
 
-a great figure at [@fig-conf-matrix].
+For more information, see moon rocket at [@fig-test-static].
 
-```{python}
-#| label: fig-test-static
-#| fig-cap: "A static test image."
-
-from IPython.display import Image
-Image(filename="resources/moon-rocket.jpg") 
-```
 
 # References {.unnumbered}
 
