@@ -8,6 +8,9 @@ website:
     left:
       - href: index.qmd
         text: Home
+    right:
+      - icon: github
+        href: https://github.com/RobWiederstein/spaceflights
 
 format:
  html:
