@@ -1,3 +1,5 @@
+![CI/CD](https://github.com/RobWiederstein/spaceflights/actions/workflows/ci.yml/badge.svg)
+
 # spaceflights
 
 # Why this project matters
