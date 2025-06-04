@@ -163,7 +163,7 @@ mlruns/*
 # quarto
 docs/_site/
 
-# vscode
+# vscode workspace
 spaceflights.code-workspace/
 
 # Ignore RStudio project files
