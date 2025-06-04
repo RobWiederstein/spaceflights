@@ -80,9 +80,43 @@ df.head(5)
 ```{python}
 #| label: fig-confusion-matrix
 #| fig-cap: "Results."
+#| eval: FALSE
 img_path = "../data/08_reporting/dummy_confusion_matrix.png/2025-05-22T12.16.33.752Z/dummy_confusion_matrix.png"
 display(Image(filename=img_path))
 ```
+
+```{python}
+def pull_latest_version_plot(
+    base_folder: str = "../data/08_reporting/dummy_confusion_matrix.png",
+    filename: str = "dummy_confusion_matrix.png"
+):
+    """
+    Locate the most recent timestamped subfolder under `base_folder`, then display
+    the image named `filename` inside it.
+
+    Parameters:
+    - base_folder: Path to the versioned‐plot directory (default: "../data/08_reporting/dummy_confusion_matrix.png")
+    - filename:     Name of the image file inside each timestamped folder
+    """
+    base_dir = Path(base_folder)
+
+    # 1) List all versioned timestamp directories
+    all_versions = [p for p in base_dir.iterdir() if p.is_dir()]
+    if not all_versions:
+        raise FileNotFoundError(f"No versioned images found in {base_dir!r}")
+
+    # 2) Pick the alphabetically “largest” folder name → the most recent timestamp
+    latest_dir = sorted(all_versions)[-1]
+
+    # 3) Build the full path to the image file
+    img_path = latest_dir / filename
+
+    # 4) Display it in the current Jupyter/Quarto context
+    display(Image(filename=str(img_path)))
+
+pull_latest_version_plot()
+```
+
 
 For more information, see moon rocket at [@fig-test-static].
 
