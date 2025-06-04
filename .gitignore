@@ -166,4 +166,6 @@ docs/_site/
 # vscode
 spaceflights.code-workspace/
 
+# Ignore RStudio project files
+*.Rproj
 .Rproj.user
