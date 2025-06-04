@@ -164,7 +164,7 @@ mlruns/*
 docs/_site/
 
 # vscode workspace
-spaceflights.code-workspace/
+spaceflights.code-workspace
 
 # Ignore RStudio project files
 *.Rproj
