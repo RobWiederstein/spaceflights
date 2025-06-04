@@ -26,31 +26,49 @@ from IPython.display import Image, display
 
 def pull_latest_version_plot(
     name: str,
-    base_dir: str,
+    base_dir: str = "../data/08_reporting"
 ):
     """
-    Locate the most recent timestamped subfolder under `{base_dir}/{name}.png`,
-    then display the image `{name}.png` inside it.
+    Locate the most recent timestamped subfolder under `base_dir/{folder_name}`,
+    then display the image called `{filename}` inside it.
 
-    Parameters:
-    - name:     The base name of the versioned‐plot folder (e.g., "dummy_confusion_matrix")
-    - base_dir: Path to the parent reporting directory (default: "../data/08_reporting")
+    Parameters
+    ----------
+    name : str
+        Either "dummy_confusion_matrix" or "dummy_confusion_matrix.png"
+        (the name of the versioned-folder). If no ".png" suffix is present,
+        this function will add it automatically.
+    base_dir : str
+        The parent directory under which the versioned folder lives.
+        (Default: "../data/08_reporting")
     """
-    # 1) Build the path to the versioned directory for this plot
-    versioned_dir = Path(base_dir) / name
+    # 1) Normalize so folder_name always ends with ".png"
+    if name.lower().endswith(".png"):
+        folder_name = name
+    else:
+        folder_name = f"{name}.png"
 
-    # 2) List all subfolders (each is a timestamp)
+    # 2) The actual filename we want to display
+    filename = folder_name
+
+    versioned_dir = Path(base_dir) / folder_name
+    if not versioned_dir.exists():
+        raise FileNotFoundError(f"Versioned folder not found: {versioned_dir}")
+
+    # 3) List all timestamped subdirectories inside that folder
     all_versions = [p for p in versioned_dir.iterdir() if p.is_dir()]
     if not all_versions:
-        raise FileNotFoundError(f"No versioned images found in {versioned_dir!r}")
+        raise FileNotFoundError(f"No versioned subfolders in {versioned_dir!r}")
 
-    # 3) Pick the lexicographically largest (i.e., most recent) folder
+    # 4) Pick the lexicographically largest timestamp folder (i.e. latest)
     latest_dir = sorted(all_versions)[-1]
 
-    # 4) Construct the full path to the image file
-    img_path = latest_dir / f"{name}.png"
+    # 5) Construct the full path to the image file
+    img_path = latest_dir / filename
+    if not img_path.exists():
+        raise FileNotFoundError(f"Image not found: {img_path}")
 
-    # 5) Display it
+    # 6) Display the image in Jupyter/Quarto
     display(Image(filename=str(img_path)))
 ```
 
@@ -109,13 +127,6 @@ df.head(5)
 
 
 # Results 
-```{python}
-#| label: fig-confusion-matrix
-#| fig-cap: "Results."
-#| eval: FALSE
-img_path = "../data/08_reporting/dummy_confusion_matrix.png/2025-05-22T12.16.33.752Z/dummy_confusion_matrix.png"
-display(Image(filename=img_path))
-```
 
 ```{python}
 pull_latest_version_plot(name="dummy_confusion_matrix.png", base_dir="../data/08_reporting")
