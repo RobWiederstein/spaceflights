@@ -1,5 +1,4 @@
-![CI/CD](https://github.com/RobWiederstein/spaceflights/actions/workflows/ci.yml/badge.svg)
-
+[![Docker Build and Push CI](https://github.com/RobWiederstein/spaceflights/actions/workflows/docker-build-push.yml/badge.svg)](https://github.com/RobWiederstein/spaceflights/actions/workflows/docker-build-push.yml)
 # spaceflights
 
 # Why this project matters
