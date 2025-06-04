@@ -678,54 +678,14 @@ Table&nbsp;4: First 5 rows of the Model Input Table
 </section>
 <section id="results" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Results</h1>
-<div id="fig-confusion-matrix" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="7">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-confusion-matrix-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-error">
-<div class="ansi-escaped-output">
-<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[7], line 2</span>
-<span class="ansi-green-fg ansi-bold">      1</span> img_path <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">../data/08_reporting/dummy_confusion_matrix.png/2025-05-22T12.16.33.752Z/dummy_confusion_matrix.png</span><span style="color:rgb(175,0,0)">"</span>
-<span class="ansi-green-fg">----&gt; 2</span> display(<span class="ansi-yellow-bg">Image</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">filename</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">img_path</span><span class="ansi-yellow-bg">)</span>)
-
-File <span class="ansi-green-fg">/usr/local/lib/python3.13/site-packages/IPython/core/display.py:1053</span>, in <span class="ansi-cyan-fg">Image.__init__</span><span class="ansi-blue-fg">(self, data, url, filename, format, embed, width, height, retina, unconfined, metadata, alt)</span>
-<span class="ansi-green-fg ansi-bold">   1051</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>unconfined <span style="color:rgb(98,98,98)">=</span> unconfined
-<span class="ansi-green-fg ansi-bold">   1052</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>alt <span style="color:rgb(98,98,98)">=</span> alt
-<span class="ansi-green-fg">-&gt; 1053</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">super</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">Image</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">)</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span style="color:rgb(0,0,255)" class="ansi-yellow-bg">__init__</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">data</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">data</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">url</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">url</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">filename</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">filename</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg ansi-bold">   1054</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">metadata</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">metadata</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg ansi-bold">   1056</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>width <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span> <span style="font-weight:bold;color:rgb(175,0,255)">and</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>metadata<span style="color:rgb(98,98,98)">.</span>get(<span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">width</span><span style="color:rgb(175,0,0)">'</span>, {}):
-<span class="ansi-green-fg ansi-bold">   1057</span>     <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>width <span style="color:rgb(98,98,98)">=</span> metadata[<span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">width</span><span style="color:rgb(175,0,0)">'</span>]
-
-File <span class="ansi-green-fg">/usr/local/lib/python3.13/site-packages/IPython/core/display.py:371</span>, in <span class="ansi-cyan-fg">DisplayObject.__init__</span><span class="ansi-blue-fg">(self, data, url, filename, metadata)</span>
-<span class="ansi-green-fg ansi-bold">    368</span> <span style="font-weight:bold;color:rgb(0,135,0)">elif</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>metadata <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
-<span class="ansi-green-fg ansi-bold">    369</span>     <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>metadata <span style="color:rgb(98,98,98)">=</span> {}
-<span class="ansi-green-fg">--&gt; 371</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">reload</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg ansi-bold">    372</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>_check_data()
-
-File <span class="ansi-green-fg">/usr/local/lib/python3.13/site-packages/IPython/core/display.py:1088</span>, in <span class="ansi-cyan-fg">Image.reload</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-fg ansi-bold">   1086</span> <span style="font-style:italic;color:rgb(175,0,0)">"""Reload the raw data from file or URL."""</span>
-<span class="ansi-green-fg ansi-bold">   1087</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>embed:
-<span class="ansi-green-fg">-&gt; 1088</span>     <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">super</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">Image</span><span class="ansi-yellow-bg">,</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">)</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">reload</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg ansi-bold">   1089</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>retina:
-<span class="ansi-green-fg ansi-bold">   1090</span>         <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>_retina_shape()
-
-File <span class="ansi-green-fg">/usr/local/lib/python3.13/site-packages/IPython/core/display.py:397</span>, in <span class="ansi-cyan-fg">DisplayObject.reload</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-fg ansi-bold">    395</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>filename <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
-<span class="ansi-green-fg ansi-bold">    396</span>     encoding <span style="color:rgb(98,98,98)">=</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">b</span><span style="color:rgb(175,0,0)">"</span> <span style="font-weight:bold;color:rgb(175,0,255)">in</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>_read_flags <span style="font-weight:bold;color:rgb(0,135,0)">else</span> <span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">utf-8</span><span style="color:rgb(175,0,0)">"</span>
-<span class="ansi-green-fg">--&gt; 397</span>     <span style="font-weight:bold;color:rgb(0,135,0)">with</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">open</span><span class="ansi-yellow-bg">(</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">filename</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_read_flags</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">encoding</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg">)</span> <span style="font-weight:bold;color:rgb(0,135,0)">as</span> f:
-<span class="ansi-green-fg ansi-bold">    398</span>         <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>data <span style="color:rgb(98,98,98)">=</span> f<span style="color:rgb(98,98,98)">.</span>read()
-<span class="ansi-green-fg ansi-bold">    399</span> <span style="font-weight:bold;color:rgb(0,135,0)">elif</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>url <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
-<span class="ansi-green-fg ansi-bold">    400</span>     <span style="font-style:italic;color:rgb(95,135,135)"># Deferred import</span>
-
-<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: '../data/08_reporting/dummy_confusion_matrix.png/2025-05-22T12.16.33.752Z/dummy_confusion_matrix.png'</pre>
-</div>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-confusion-matrix-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2
-</figcaption>
+<div id="e0234e43" class="cell" data-execution_count="8">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
 </figure>
+</div>
+</div>
 </div>
 <p>For more information, see moon rocket at <a href="#fig-test-static" class="quarto-xref">Figure&nbsp;1</a>.</p>
 </section>
