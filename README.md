@@ -14,32 +14,37 @@ The project aims to provide a reproducible machine learning project and publishi
 
 # Installation (via Docker)
 
-Rather than installing dependencies locally, you can pull the prebuilt Docker image from the GitHub Container Registry and run everything inside the container:
+To reproduce the project exactly (including all data pipelines and rendered docs) use the official Docker image. We have published version `v.0.1.1` to GitHub Container Registry.
 
-Pull the v0.1.0 image
+
+1. Pull the specific release:
 
 ```bash
-docker pull ghcr.io/robwiederstein/spaceflights-app:v0.1.0
+docker pull ghcr.io/robwiederstein/spaceflights-app:v0.1.1
+
+# or the latest version
+
+docker pull ghcr.io/robwiederstein/spaceflights-app:latest
 ```
+2. Run the pipeline + render documentation
 
-To run the Kedro pipeline from the project root (where your spaceflights folder lives), execute:
+Create (or navigate to) an empty folder and run:
 
 ```bash
+mkdir spaceflights-demo
+cd spaceflights-demo
+
 docker run --rm \
   -v "$(pwd)":/home/spaceflights \
   -w /home/spaceflights \
-  ghcr.io/robwiederstein/spaceflights-app:v0.1.0 \
-  kedro run
-```
-
-This command: mounts your local project directory ($(pwd)) into `/home/spaceflights` inside the container, sets the working directory to `/home/spaceflights`, runs `kedro run` using the image’s pre-installed Python, Kedro, and other dependencies.
-
-To build the Quarto site (e.g., `docs/index.qmd`), run:
-
-```bash
-docker run --rm \
-  -v "$(pwd)":/home/spaceflights \
-  -w /home/spaceflights \
-  ghcr.io/robwiederstein/spaceflights-app:v0.1.0 \
+  ghcr.io/robwiederstein/spaceflights-app:v.0.1.1 \
   ./run_and_render.sh
 ```
+
+This will (1) execute kedro run (building models, tables, plots, etc.), (2) invoke quarto render to build the full website into docs/_site, and (3) populate your local directory (spaceflights-demo) with all outputs.
+
+3. Open `docs/_site/index.html` in your browser
+
+
+# License
+This project is licensed under the [MIT License](./LICENSE.md).
